@@ -8,10 +8,8 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <script type="module" src="{{ asset('vendor/datastar/1.0.0-RC.1/datastar.js') }}"></script>
 </head>
-<body 
+<body
     class="bg-light"
 >
 <div id="toast-notifier" class="fixed top-5 right-5 z-50 space-y-3 max-w-sm w-full"></div>
