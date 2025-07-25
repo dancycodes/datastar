@@ -3079,12 +3079,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/putyourlightson/laravel-datastar.git",
-                "reference": "51ff3061e0f044fa8a36e5f47b5dfcb8bb3241d4"
+                "reference": "d254d77876375e82e931949f353695ef5c977fd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/51ff3061e0f044fa8a36e5f47b5dfcb8bb3241d4",
-                "reference": "51ff3061e0f044fa8a36e5f47b5dfcb8bb3241d4",
+                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/d254d77876375e82e931949f353695ef5c977fd5",
+                "reference": "d254d77876375e82e931949f353695ef5c977fd5",
                 "shasum": ""
             },
             "require": {
@@ -3129,7 +3129,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-25T11:20:20+00:00"
+            "time": "2025-07-25T15:47:05+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
