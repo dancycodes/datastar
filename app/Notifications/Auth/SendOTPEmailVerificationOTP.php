@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendOTPPasswordReset extends Notification implements ShouldQueue
+class SendOTPEmailVerificationOTP extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -37,8 +37,8 @@ class SendOTPPasswordReset extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Password Reset Code'))
-            ->view('emails.auth.otp-password-reset', [
+            ->subject(__('Email Verification Code'))
+            ->view('emails.auth.otp-email-verification', [
                 'user' => $notifiable,
                 'otp' => $this->otp,
             ]);
@@ -54,7 +54,7 @@ class SendOTPPasswordReset extends Notification implements ShouldQueue
         return [
             'otp' => $this->otp,
             'user_id' => $notifiable->id,
-            'type' => 'password_reset_otp',
+            'type' => 'email_verification_otp',
         ];
     }
 }

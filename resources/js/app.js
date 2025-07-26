@@ -227,7 +227,7 @@ window.showToast = function (type, message) {
     }, 5000);
 };
 
-function removeToast(toastId) {
+window.removeToast = function (toastId) {
     const toastElement = document.getElementById(toastId);
     if (toastElement) {
         toastElement.classList.add("translate-x-full", "opacity-0");
@@ -237,4 +237,4 @@ function removeToast(toastId) {
             }
         }, 300);
     }
-}
+};

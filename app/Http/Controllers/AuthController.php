@@ -18,11 +18,6 @@ class AuthController extends Controller
         ];
     }
 
-    public function getLoginForm()
-    {
-        $this->patchElements(view('components.auth.login-form'));
-    }
-
     public function register()
     {
         $signals = $this->readSignals();
@@ -34,14 +29,14 @@ class AuthController extends Controller
         auth()->login($user);
 
         $this->location(route('email.verify'));
-
-        $this->toastify('success', __('Registration successful! Please verify your email address.'));
     }
 
     public function logout()
     {
-
         auth()->logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
 
         $this->location(route('login'));
     }
@@ -60,5 +55,55 @@ class AuthController extends Controller
         } else {
             $this->toastify('error', __('Invalid credentials.'));
         }
+    }
+
+    public function sendOtp()
+    {
+        $signals = $this->readSignals();
+
+        $validated = $this->validate($signals, [
+            'email' => 'required|email|max:100',
+        ]);
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if ($user) {
+            // Check if the user has an otp of type 'password'
+            $existingOtp = $user->otps()->where('type', 'password')->first();
+            if ($existingOtp) {
+                if ($existingOtp->expires_at > now()) {
+                    $this->toastify('info', __('An OTP code has already been sent to your email.'));
+
+                    $this->patchElements(view('components.auth.forgot-password')->fragment('otp-field'));
+
+                    $this->patchSignals([
+                        'email' => $validated['email'],
+                    ]);
+
+                    return;
+                } else {
+                    $existingOtp->delete();
+                }
+            }
+
+            // Logic to send OTP code to the user's email
+            $otp = rand(100000, 999999);
+
+            $user->otps()->create([
+                'type' => 'password',
+                'otp' => $otp,
+                'expires_at' => now()->addMinutes(10),
+            ]);
+
+            $user->notifyNow(new \App\Notifications\Auth\SendOTPPasswordReset($otp));
+        }
+
+        $this->toastify('success', __('OTP code sent to your email.'));
+
+        $this->patchElements(view('components.auth.forgot-password')->fragment('otp-field'));
+
+        $this->patchSignals([
+            'email' => $validated['email'],
+        ]);
     }
 }

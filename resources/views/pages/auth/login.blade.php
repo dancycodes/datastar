@@ -8,7 +8,7 @@
 
 <x-layouts.app>
     <div class="flex items-center justify-center">   
-        <x-ui.card id="auth-form">
+        <x-ui.card>
             <x-ui.image-title
                 :src="asset('images/datastar.jpg')"
                 :title="__('Login')"

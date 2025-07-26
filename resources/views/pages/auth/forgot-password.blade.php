@@ -8,13 +8,13 @@
 
 <x-layouts.app>
     <div class="flex items-center justify-center">   
-        <x-ui.card id="auth-form">
+        <x-ui.card>
             <x-ui.image-title
                 :src="asset('images/datastar.jpg')"
                 :title="__('Forgot Password')"
             />
 
-            <div class="pb-4 border-b border-gray-300 space-y-2">
+            <div id="form" class="pb-4 border-b border-gray-300 space-y-2">
                 <x-ui.input
                     name="email"
                     type="email"
@@ -25,8 +25,8 @@
 
                 <button
                     class="btn"
-                    data-on-click="{{ datastar()->post(['AuthController', 'login']) }}"
-                    data-attr-disabled="!($email && $password)"
+                    data-on-click="{{ datastar()->post(['AuthController', 'sendOtp']) }}"
+                    data-attr-disabled="!($email)"
                 >
                     {{ __('Send OTP code') }}
                 </button>
