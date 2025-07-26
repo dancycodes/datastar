@@ -28,7 +28,6 @@
                     type="password"
                     :placeholder="__('Enter your password')"
                     :label="__('Password')"
-                    field_validates_controller="AuthController"
                 />
 
                 <button
