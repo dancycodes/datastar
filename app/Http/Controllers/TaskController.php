@@ -4,10 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Traits\DatastarHelpers;
+// use Illuminate\Routing\Controllers\HasMiddleware;
+// use Illuminate\Routing\Controllers\Middleware;
 
-class TaskController extends Controller
+class TaskController extends Controller // implements HasMiddleware
 {
     use DatastarHelpers;
+
+    // public static function middleware(): array
+    // {
+    //     return [
+    //         'auth'
+    //     ];
+    // }
+
+    protected function rules(): array
+    {
+        return [
+            'title' => 'required|string|min:3|max:255',
+            'due_date' => 'required|date|after_or_equal:today',
+        ];
+    }
 
     public function store(): void
     {
@@ -15,10 +32,7 @@ class TaskController extends Controller
 
         $task_data = $this->validate(
             $signals,
-            [
-                'title' => 'required|string|min:3|max:255',
-                'due_date' => 'required|date|after_or_equal:today',
-            ]
+            $this->rules()
         );
 
         // Create the task using the validated data
@@ -103,10 +117,7 @@ class TaskController extends Controller
 
         $taskData = $this->validate(
             $signals,
-            [
-                "title_{$task->id}" => 'required|string|min:3|max:255',
-                "due_date_{$task->id}" => 'required|date|after_or_equal:today',
-            ]
+            $this->setRulesKey($task->id),
         );
 
         $task->update([

@@ -1,14 +1,19 @@
 <div id="task-{{ $task->id }}" class="bg-gray-200 p-2 shadow rounded overflow-hidden">
     <div class="flex justify-between items-center ">
         <div class="flex gap-x-2 items-center">
-            <div>
-                <input data-bind="title_{{ $task->id }}" type="text" class="text-sm w-full p-1.5 border rounded bg-white" placeholder="{{ __('Task Title') }}">
-                <div class="text-red-500 text-sm mt-1" data-show="$errors?.title_{{ $task->id }}" data-text="$errors?.title_{{ $task->id }}"></div>
-            </div>
-            <div>
-                <input data-bind="due_date_{{ $task->id }}" type="date" class="text-sm w-full p-1.5 border rounded bg-white" placeholder="{{ __('Due Date') }}">
-                <div class="text-red-500 text-sm mt-1" data-show="$errors?.due_date_{{ $task->id }}" data-text="$errors?.due_date_{{ $task->id }}"></div>
-            </div>
+            <x-ui.input
+                name="title_{{ $task->id }}"
+                :placeholder="__('Task Title')"
+                :field_validates_controller="'TaskController'"
+                :field_validates_key="$task->id"
+            />
+            <x-ui.input
+                name="due_date_{{ $task->id }}"
+                type="date"
+                :placeholder="__('Due Date')"
+                :field_validates_controller="'TaskController'"
+                :field_validates_key="$task->id"
+            />
         </div>
         <div class="flex gap-x-2 items-center">
             <button

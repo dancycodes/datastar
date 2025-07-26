@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function otps()
+    {
+        return $this->hasMany(Otp::class);
+    }
 }

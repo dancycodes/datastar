@@ -24,7 +24,7 @@ trait DatastarHelpers
             $this->toastify('error', __('Check the form for errors.'));
 
             if ($abortOnFailure) {
-                abort(422);
+                exit();
             }
 
             return $validator->errors()->toArray();
@@ -45,5 +45,54 @@ trait DatastarHelpers
     protected function toastify($type, $message)
     {
         $this->executeScript("showToast('{$type}', '{$message}');");
+    }
+
+    protected function setRulesKey($key)
+    {
+        $newRules = [];
+        foreach ($this->rules() as $field => $rule) {
+            $newRules["{$field}_{$key}"] = $rule;
+        }
+
+        return $newRules;
+    }
+
+    public function fieldValidate($field, $key = null)
+    {
+        $rules = $this->rules();
+
+        if ($key) {
+            if (!str_ends_with($field, "_{$key}")) {
+                $this->toastify(
+                    'error',
+                    __('Field Validation setup for :field is not valid.', ['field' => $field])
+                );
+                return;
+            }
+            $rules = $this->setRulesKey($key);
+        }
+
+        if (!isset($rules[$field])) {
+            $this->toastify(
+                'error',
+                __('Field :field is not found in rules.', ['field' => $field])
+            );
+            return;
+        }
+
+        $signals = $this->readSignals();
+
+        if (!isset($signals[$field])) {
+            $this->toastify(
+                'error',
+                __('Field :field is not found in signals.', ['field' => $field])
+            );
+            return;
+        }
+
+        $this->validate(
+            $signals,
+            [$field => $rules[$field]]
+        );
     }
 }
