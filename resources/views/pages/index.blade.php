@@ -9,7 +9,7 @@
     middleware('auth');
 
     render(function (View $view) {
-        return $view->with('tasks', Task::all());
+        return $view->with('tasks', auth()->user()->tasks()->latest()->get());
     }); 
 
 ?>

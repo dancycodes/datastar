@@ -36,10 +36,10 @@ class TaskController extends Controller // implements HasMiddleware
         );
 
         // Create the task using the validated data
-        $task = Task::create($task_data);
+        $task = auth()->user()->tasks()->create($task_data);
 
-        if (Task::count() === 1) {
-            $this->patchElements(view('pages.index', ['tasks' => Task::all()])->fragment('task-list'));
+        if (auth()->user()->tasks()->count() === 1) {
+            $this->patchElements(view('pages.index', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
         } else {
             $this->patchElements(
                 view('components.tasks.item', compact('task')),
