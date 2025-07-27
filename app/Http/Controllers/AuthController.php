@@ -18,26 +18,6 @@ class AuthController extends Controller
         ];
     }
 
-    public function test()
-    {
-        // Posted values
-        $values = [
-            'email' => request()->input('email'),
-            'password' => request()->input('password'),
-        ];
-
-        $credentials = $this->validate($values, [
-            'email' => 'required|email|max:100',
-            'password' => 'required|string',
-        ]);
-
-        if (auth()->attempt($credentials, true)) {
-            return redirect()->route('home');
-        } else {
-            throw new \Exception(__('Invalid credentials.'));
-        }
-    }
-
     public function register()
     {
         $signals = $this->readSignals();
@@ -46,9 +26,12 @@ class AuthController extends Controller
 
         $user = \App\Models\User::create($validated);
 
+        // Authentication must happen before the response is sent
         auth()->login($user);
 
-        $this->location(route('email.verify'));
+        return $this->getStreamedResponse(function() {
+            $this->location(route('email.verify'));
+        });
     }
 
     public function logout()
@@ -70,11 +53,16 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (auth()->attempt($credentials, $signals['remember'] ?? false)) {
-            $this->location(route('home'));
-        } else {
-            $this->toastify('error', __('Invalid credentials.'));
-        }
+        // Authentication must happen before the response is sent
+        $success =  auth()->attempt($credentials, $signals['remember'] ?? false);
+
+        return $this->getStreamedResponse(function() use ($success) {
+            if ($success) {
+                $this->location(route('home'));
+            } else {
+                $this->toastify('error', __('Invalid credentials.'));
+            }
+        });
     }
 
     public function sendOtp()

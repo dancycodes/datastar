@@ -7,7 +7,7 @@
 ?>
 
 <x-layouts.app>
-    <div class="flex items-center justify-center">   
+    <div class="flex items-center justify-center">
         <x-ui.card>
             <x-ui.image-title
                 :src="asset('images/datastar.jpg')"
@@ -32,7 +32,7 @@
 
                 <button
                     class="btn"
-                    data-on-click="{{ datastar()->post(['AuthController', 'login']) }}"
+                    data-on-click="@post('{{ route('login.post') }}', {headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}})"
                     data-attr-disabled="!($email && $password)"
                 >
                     {{ __('Login') }}
