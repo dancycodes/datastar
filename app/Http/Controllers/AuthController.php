@@ -18,6 +18,26 @@ class AuthController extends Controller
         ];
     }
 
+    public function test()
+    {
+        // Posted values
+        $values = [
+            'email' => request()->input('email'),
+            'password' => request()->input('password'),
+        ];
+
+        $credentials = $this->validate($values, [
+            'email' => 'required|email|max:100',
+            'password' => 'required|string',
+        ]);
+
+        if (auth()->attempt($credentials, true)) {
+            return redirect()->route('home');
+        } else {
+            throw new \Exception(__('Invalid credentials.'));
+        }
+    }
+
     public function register()
     {
         $signals = $this->readSignals();
