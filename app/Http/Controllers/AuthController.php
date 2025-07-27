@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Traits\DatastarHelpers;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -24,21 +25,11 @@ class AuthController extends Controller
 
         $validated = $this->validate($signals, $this->rules());
 
-        $user = \App\Models\User::create($validated);
+        $user = User::create($validated);
 
-        auth()->login($user);
+        $this->authenticateForSSE($user);
 
         $this->location(route('email.verify'));
-    }
-
-    public function logout()
-    {
-        auth()->logout();
-
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-
-        $this->location(route('login'));
     }
 
     public function login()
@@ -50,11 +41,29 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (auth()->attempt($credentials, $signals['remember'] ?? false)) {
+        $user = User::where('email', $credentials['email'])->first();
+
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            $this->authenticateForSSE($user, $signals['remember'] ?? false);
             $this->location(route('home'));
         } else {
             $this->toastify('error', __('Invalid credentials.'));
         }
+    }
+
+    public function logout()
+    {
+        auth()->logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        // Force session save for SSE context
+        if ($this->isSSERequest()) {
+            request()->session()->save();
+        }
+
+        $this->location(route('login'));
     }
 
     public function sendOtp()

@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\User;
 use Putyourlightson\Datastar\DatastarEventStream;
 use Illuminate\Support\Facades\Validator;
 
@@ -94,5 +95,28 @@ trait DatastarHelpers
             $signals,
             [$field => $rules[$field]]
         );
+    }
+
+    private function isSSERequest(): bool
+    {
+        return request()->header('Datastar-Request') === 'true';
+    }
+
+    private function authenticateForSSE(User $user, bool $remember = false): void
+    {
+        $guard = auth()->guard('web');
+        $guard->setUser($user);
+
+        // Set authentication session data
+        $sessionKey = $guard->getName();
+        session()->put($sessionKey, $user->getAuthIdentifier());
+
+        // Handle remember token if requested
+        if ($remember) {
+            $user->setRememberToken(\Str::random(60));
+            $user->save();
+        }
+
+        session()->save();
     }
 }
