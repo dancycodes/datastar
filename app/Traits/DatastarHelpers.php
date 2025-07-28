@@ -2,9 +2,9 @@
 
 namespace App\Traits;
 
-use App\Models\User;
 use Putyourlightson\Datastar\DatastarEventStream;
 use Illuminate\Support\Facades\Validator;
+use App\Exceptions\DatastarValidationException;
 
 trait DatastarHelpers
 {
@@ -16,16 +16,18 @@ trait DatastarHelpers
         $validator = Validator::make($data, $rules, $messages, $attributes);
 
         if ($validator->fails()) {
-            $this->patchSignals([
-                'errors' => array_map(function ($error) {
-                    return is_array($error) ? $error[0] : $error;
-                }, $validator->errors()->toArray()),
-            ]);
-
-            $this->toastify('error', __('Check the form for errors.'));
-
             if ($abortOnFailure) {
-                exit();
+                $response = $this->getStreamedResponse(function () use ($validator) {
+                    $this->patchSignals([
+                        'errors' => array_map(function ($error) {
+                            return is_array($error) ? $error[0] : $error;
+                        }, $validator->errors()->toArray()),
+                    ]);
+
+                    $this->toastify('error', __('Check the form for errors.'));
+                });
+
+                throw new DatastarValidationException($response);
             }
 
             return $validator->errors()->toArray();
@@ -95,28 +97,5 @@ trait DatastarHelpers
             $signals,
             [$field => $rules[$field]]
         );
-    }
-
-    private function isSSERequest(): bool
-    {
-        return request()->header('Datastar-Request') === 'true';
-    }
-
-    private function authenticateForSSE(User $user, bool $remember = false): void
-    {
-        $guard = auth()->guard('web');
-        $guard->setUser($user);
-
-        // Set authentication session data
-        $sessionKey = $guard->getName();
-        session()->put($sessionKey, $user->getAuthIdentifier());
-
-        // Handle remember token if requested
-        if ($remember) {
-            $user->setRememberToken(\Str::random(60));
-            $user->save();
-        }
-
-        session()->save();
     }
 }
