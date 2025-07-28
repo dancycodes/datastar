@@ -26,7 +26,7 @@ class TaskController extends Controller // implements HasMiddleware
         ];
     }
 
-    public function store(): void
+    public function store()
     {
         $signals = $this->readSignals();
 
@@ -35,13 +35,13 @@ class TaskController extends Controller // implements HasMiddleware
             $this->rules()
         );
 
-        // Create the task using the validated data
+
         $task = auth()->user()->tasks()->create($task_data);
 
         if (auth()->user()->tasks()->count() === 1) {
-            $this->patchElements(view('pages.index', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
+            $this->addPatchElements(view('pages.index', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
         } else {
-            $this->patchElements(
+            $this->addPatchElements(
                 view('components.tasks.item', compact('task')),
                 [
                     'selector' => '#task-list',
@@ -50,51 +50,57 @@ class TaskController extends Controller // implements HasMiddleware
             );
         }
 
-        $this->patchSignals([
+        $this->addPatchSignals([
             'title' => '',
         ]);
 
-        $this->toastify(
+        $this->addToastify(
             'success',
             __('Task created successfully!')
         );
+
+        return $this->sendEvents();
     }
 
-    public function destroy(Task $task): void
+    public function destroy(Task $task)
     {
         $id = $task->id;
 
         $task->delete();
 
-        $this->removeElements("#task-{$id}");
+        $this->addRemoveElements("#task-{$id}");
 
         if (Task::count() === 0) {
-            $this->patchElements(view('pages.index', ['tasks' => Task::all()])->fragment('task-list'));
+            $this->addPatchElements(view('pages.index', ['tasks' => Task::all()])->fragment('task-list'));
         }
 
-        $this->toastify(
+        $this->addToastify(
             'success',
             __('Task deleted successfully!')
         );
+
+        return $this->sendEvents();
     }
 
-    public function toggleComplete(Task $task): void
+    public function toggleComplete(Task $task)
     {
         $task->update([
             'is_completed' => !$task->is_completed,
         ]);
 
-        $this->patchElements(view('components.tasks.item', compact('task'))->fragment('task-description'));
+        $this->addPatchElements(view('components.tasks.item', compact('task'))->fragment('task-description'));
 
-        $this->toastify(
+        $this->addToastify(
             'success',
             $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
         );
+
+        return $this->sendEvents();
     }
 
-    public function getForm(Task $task): void
+    public function getForm(Task $task)
     {
-        $this->patchSignals([
+        $this->addPatchSignals([
             "title_{$task->id}" => $task->title,
             "due_date_{$task->id}" => $task->due_date->format('Y-m-d'),
             'errors' => [
@@ -103,12 +109,16 @@ class TaskController extends Controller // implements HasMiddleware
             ],
         ]);
 
-        $this->patchElements(view('components.tasks.form', compact('task')));
+        $this->addPatchElements(view('components.tasks.form', compact('task')));
+
+        return $this->sendEvents();
     }
 
     public function getItem(Task $task)
     {
-        $this->patchElements(view('components.tasks.item', compact('task')));
+        $this->addPatchElements(view('components.tasks.item', compact('task')));
+
+        return $this->sendEvents();
     }
 
     public function update(Task $task)
@@ -125,11 +135,13 @@ class TaskController extends Controller // implements HasMiddleware
             'due_date' => $taskData["due_date_{$task->id}"],
         ]);
 
-        $this->patchElements(view('components.tasks.item', compact('task')));
+        $this->addPatchElements(view('components.tasks.item', compact('task')));
 
-        $this->toastify(
+        $this->addToastify(
             'success',
             __('Task updated successfully!')
         );
+
+        return $this->sendEvents();
     }
 }
