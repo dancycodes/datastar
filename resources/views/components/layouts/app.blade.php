@@ -14,17 +14,8 @@
 >
 <div id="toast-notifier" class="fixed top-5 right-5 z-50 space-y-3 max-w-sm w-full"></div>
     <div id="app">
-        @auth
-            <button 
-                class="btn"
-                data-on-click="{{ datastar()->post(['AuthController','logout']) }}"
-            >
-                {{ __('Logout') }}
-            </button>
-        @endauth
-
         <!-- Main Content -->
-        <main class="w-full my-20">
+        <main class="w-full my-8 p-4">
             {{ $slot }}
         </main>
 

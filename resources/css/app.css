@@ -15,6 +15,14 @@
     @apply cursor-pointer hover:text-blue-500 hover:border-1 hover:border-blue-500 hover:bg-inherit text-sm w-full bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:border-0 disabled:cursor-not-allowed disabled:text-white;
 }
 
+.btn {
+    @apply cursor-pointer hover:text-blue-500 hover:border-1 hover:border-blue-500 hover:bg-inherit text-sm w-full bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:border-0 disabled:cursor-not-allowed disabled:text-white;
+}
+
+.btn-danger {
+    @apply cursor-pointer hover:text-red-500 hover:border-1 hover:border-red-500 hover:bg-inherit text-sm w-full bg-red-500 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:border-0 disabled:cursor-not-allowed disabled:text-white;
+}
+
 .link {
     @apply font-medium text-blue-800 hover:underline cursor-pointer hover:text-blue-500;
 }

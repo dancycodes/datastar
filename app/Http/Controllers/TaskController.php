@@ -39,7 +39,7 @@ class TaskController extends Controller // implements HasMiddleware
         $task = auth()->user()->tasks()->create($task_data);
 
         if (auth()->user()->tasks()->count() === 1) {
-            $this->addPatchElements(view('pages.index', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
+            $this->addPatchElements(view('pages.todos', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
         } else {
             $this->addPatchElements(
                 view('components.tasks.item', compact('task')),
@@ -70,8 +70,8 @@ class TaskController extends Controller // implements HasMiddleware
 
         $this->addRemoveElements("#task-{$id}");
 
-        if (Task::count() === 0) {
-            $this->addPatchElements(view('pages.index', ['tasks' => Task::all()])->fragment('task-list'));
+        if (auth()->user()->tasks()->count() === 0) {
+            $this->addPatchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
         }
 
         $this->addToastify(

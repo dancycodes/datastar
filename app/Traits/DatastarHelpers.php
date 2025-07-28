@@ -227,4 +227,26 @@ trait DatastarHelpers
     {
         return !empty($this->sseEvents);
     }
+
+
+    /**
+     * Authenticate a user in Server-Sent Events (SSE)
+     */
+    private function authenticateForSSE(\App\Models\User $user, bool $remember = false): void
+    {
+        $guard = auth()->guard('web');
+        $guard->setUser($user);
+
+        // Set authentication session data
+        $sessionKey = $guard->getName();
+        session()->put($sessionKey, $user->getAuthIdentifier());
+
+        // Handle remember token if requested
+        if ($remember) {
+            $user->setRememberToken(\Str::random(60));
+            $user->save();
+        }
+
+        session()->save();
+    }
 }

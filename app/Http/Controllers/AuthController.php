@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\OtpService;
 use App\Traits\DatastarHelpers;
 
 class AuthController extends Controller
 {
     use DatastarHelpers;
+
+    public function __construct(
+        private OtpService $otpService
+    ) {
+    }
 
     protected function rules(): array
     {
@@ -24,11 +30,13 @@ class AuthController extends Controller
 
         $validated = $this->validate($signals, $this->rules());
 
-        $user = \App\Models\User::create($validated);
+        $user = User::create($validated);
+
+        $this->otpService->generateAndSendOtp($user, OtpService::TYPE_EMAIL);
 
         auth()->login($user);
 
-        $this->addLocation(route('email.verify'));
+        $this->addLocation(route('verification.notice'));
 
         return $this->sendEvents();
     }
@@ -40,7 +48,7 @@ class AuthController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        $this->addLocation(route('login'));
+        $this->addLocation(route('home'));
 
         return $this->sendEvents();
     }
@@ -57,7 +65,7 @@ class AuthController extends Controller
         $success = auth()->attempt($credentials, $signals['remember'] ?? false);
 
         if ($success) {
-            $this->addLocation(route('home'));
+            $this->addLocation(route('todos.index'));
         } else {
             $this->addToastify('error', __('Invalid credentials.'));
         }
@@ -76,35 +84,27 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if ($user) {
-            // Check if the user has an otp of type 'password'
-            $existingOtp = $user->otps()->where('type', 'password')->first();
-            if ($existingOtp) {
-                if ($existingOtp->expires_at > now()) {
-                    $this->addPatchElements(view('components.auth.forgot-password')->fragment('otp-field'));
-                    $this->addPatchSignals($validated);
-                    $this->addToastify('info', __('An OTP code has already been sent to your email.'));
-
-                    return $this->sendEvents();
-                } else {
-                    $existingOtp->delete();
-                }
+            // Check if user already has a valid OTP
+            if ($this->otpService->hasValidOtp($user, OtpService::TYPE_PASSWORD)) {
+                $this->addPatchElements(view('components.auth.forgot-password')->fragment('otp-field'));
+                $this->addPatchSignals($validated);
+                $this->addToastify('info', __('An OTP code has already been sent to your email.'));
+                return $this->sendEvents();
             }
 
-            // Logic to send OTP code to the user's email
-            $otp = rand(100000, 999999);
-
-            $user->otps()->create([
-                'type' => 'password',
-                'otp' => $otp,
-                'expires_at' => now()->addMinutes(10),
-            ]);
-
-            $user->notifyNow(new \App\Notifications\Auth\SendOTPPasswordReset($otp));
+            // Generate and send new OTP
+            $result = $this->otpService->generateAndSendOtp($user, OtpService::TYPE_PASSWORD);
+        } else {
+            // Still show success for security (don't reveal if email exists)
+            $result = [
+                'success' => true,
+                'message' => __('If an account with this email exists, an OTP code has been sent.')
+            ];
         }
 
         $this->addPatchElements(view('components.auth.forgot-password')->fragment('otp-field'));
         $this->addPatchSignals($validated);
-        $this->addToastify('success', __('OTP code sent to your email.'));
+        $this->addToastify('success', $result['message']);
 
         return $this->sendEvents();
     }
@@ -118,18 +118,18 @@ class AuthController extends Controller
             'otp' => 'required',
         ]);
 
-        $user = User::where('email', $validated['email'])
-            ->whereHas('otps', function ($query) use ($validated) {
-                $query->where('type', 'password')
-                    ->where('otp', $validated['otp'])
-                    ->where('expires_at', '>', now());
-            })
-            ->first();
+        $user = User::where('email', $validated['email'])->first();
 
         if ($user) {
-            $this->addPatchElements(view('components.auth.forgot-password')->fragment('password-field'));
-            $this->addPatchSignals($validated);
-            $this->addToastify('success', __('OTP verified successfully. You can now reset your password.'));
+            $result = $this->otpService->verifyOtp($user, $validated['otp'], OtpService::TYPE_PASSWORD);
+
+            if ($result['success']) {
+                $this->addPatchElements(view('components.auth.forgot-password')->fragment('password-field'));
+                $this->addPatchSignals($validated);
+                $this->addToastify('success', $result['message']);
+            } else {
+                $this->addToastify('error', $result['message']);
+            }
         } else {
             $this->addToastify('error', __('Invalid or expired OTP.'));
         }
@@ -148,25 +148,12 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if ($user) {
-            // Check if the user has an otp of type 'password'
-            $existingOtp = $user->otps()->where('type', 'password')->first();
-            if ($existingOtp) {
-                $existingOtp->delete();
-            }
-
-            // Logic to resend OTP code to the user's email
-            $otp = rand(100000, 999999);
-
-            $user->otps()->create([
-                'type' => 'password',
-                'otp' => $otp,
-                'expires_at' => now()->addMinutes(10),
-            ]);
-
-            $user->notifyNow(new \App\Notifications\Auth\SendOTPPasswordReset($otp));
+            $result = $this->otpService->resendOtp($user, OtpService::TYPE_PASSWORD);
+            $this->addToastify('success', $result['message']);
+        } else {
+            // Still show success for security
+            $this->addToastify('success', __('If an account with this email exists, a new OTP code has been sent.'));
         }
-
-        $this->addToastify('success', __('OTP code resent to your email.'));
 
         return $this->sendEvents();
     }
@@ -188,19 +175,98 @@ class AuthController extends Controller
             'otp' => 'required',
         ]);
 
-        $user = User::where('email', $validated['email'])
-            ->whereHas('otps', function ($query) use ($validated) {
-                $query->where('type', 'password')
-                    ->where('otp', $validated['otp']);
-            })
-            ->first();
+        $user = User::where('email', $validated['email'])->first();
 
         if ($user) {
-            $user->update(['password' => $validated['password']]);
-            $this->addLocation(route('login'));
+            // Verify OTP one more time before password reset
+            $otpResult = $this->otpService->verifyOtp($user, $validated['otp'], OtpService::TYPE_PASSWORD);
+
+            if ($otpResult['success']) {
+                // Update password
+                $user->update(['password' => $validated['password']]);
+
+                // Clean up password OTPs
+                $user->otps()->where('type', OtpService::TYPE_PASSWORD)->delete();
+
+                $this->addToastify('success', __('Password reset successfully! You can now login with your new password.'));
+                $this->addLocation(route('login'));
+            } else {
+                $this->addToastify('error', $otpResult['message']);
+            }
         } else {
             $this->addToastify('error', __('Something went wrong.'));
         }
+
+        return $this->sendEvents();
+    }
+
+    public function sendEmailVerificationOtp()
+    {
+        $user = auth()->user();
+
+        if ($user->hasVerifiedEmail()) {
+            $this->addToastify('info', __('Your email is already verified.'));
+            return $this->sendEvents();
+        }
+
+        // Check if user already has a valid OTP
+        if ($this->otpService->hasValidOtp($user, OtpService::TYPE_EMAIL)) {
+            $this->addToastify('info', __('An email verification code has already been sent to your email.'));
+            return $this->sendEvents();
+        }
+
+        // Generate and send email verification OTP
+        $result = $this->otpService->generateAndSendOtp($user, OtpService::TYPE_EMAIL);
+
+        $this->addToastify('success', $result['message']);
+
+        return $this->sendEvents();
+    }
+
+    public function verifyEmailOtp()
+    {
+        $signals = $this->readSignals();
+
+        $validated = $this->validate($signals, [
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $user = auth()->user();
+
+        if ($user->hasVerifiedEmail()) {
+            $this->addToastify('info', __('Your email is already verified.'));
+            $this->addLocation(route('todos.index'));
+            return $this->sendEvents();
+        }
+
+        // Verify the OTP
+        $otpResult = $this->otpService->verifyOtp($user, $validated['otp'], OtpService::TYPE_EMAIL);
+
+        if ($otpResult['success']) {
+            // Complete email verification
+            $this->otpService->completeEmailVerification($user);
+
+            $this->addLocation(route('todos.index'));
+        } else {
+            $this->addToastify('error', $otpResult['message']);
+        }
+
+        return $this->sendEvents();
+    }
+
+    public function resendEmailVerificationOtp()
+    {
+        $user = auth()->user();
+
+        if ($user->hasVerifiedEmail()) {
+            $this->addToastify('info', __('Your email is already verified.'));
+            return $this->sendEvents();
+        }
+
+        // Resend email verification OTP
+        $result = $this->otpService->resendOtp($user, OtpService::TYPE_EMAIL);
+
+        $this->addToastify('success', $result['message']);
 
         return $this->sendEvents();
     }
