@@ -25,8 +25,8 @@ trait DatastarHelpers
                     'errors' => array_map(function ($error) {
                         return is_array($error) ? $error[0] : $error;
                     }, $validator->errors()->toArray()),
-                ]);
-                $this->addToastify('error', __('Check the form for errors.'));
+                ])
+                    ->addToastify('error', __('Check the form for errors.'));
 
                 // Throw exception with the streamed response
                 throw new DatastarValidationException($this->sendEvents());
@@ -101,68 +101,70 @@ trait DatastarHelpers
     /**
      * Add an SSE event to the events array
      */
-    public function addEvent(string $method, ...$args): void
+    public function addEvent(string $method, ...$args) 
     {
         $this->sseEvents[] = [
             'method' => $method,
             'args' => $args
         ];
+
+        return $this;
     }
 
     /**
      * Add a patch elements event
      */
-    public function addPatchElements(string $data, array $options = []): void
+    public function addPatchElements(string $data, array $options = []) 
     {
-        $this->addEvent('patchElements', $data, $options);
+        return $this->addEvent('patchElements', $data, $options);
     }
 
     /**
      * Add a remove elements event
      */
-    public function addRemoveElements(string $selector, array $options = []): void
+    public function addRemoveElements(string $selector, array $options = []) 
     {
-        $this->addEvent('removeElements', $selector, $options);
+        return $this->addEvent('removeElements', $selector, $options);
     }
 
     /**
      * Add a patch signals event
      */
-    public function addPatchSignals(array $signals, array $options = []): void
+    public function addPatchSignals(array $signals, array $options = []) 
     {
-        $this->addEvent('patchSignals', $signals, $options);
+        return $this->addEvent('patchSignals', $signals, $options);
     }
 
     /**
      * Add an execute script event
      */
-    public function addExecuteScript(string $script, array $options = []): void
+    public function addExecuteScript(string $script, array $options = []) 
     {
-        $this->addEvent('executeScript', $script, $options);
+        return $this->addEvent('executeScript', $script, $options);
     }
 
     /**
      * Add a location redirect event
      */
-    public function addLocation(string $uri, array $options = []): void
+    public function addLocation(string $uri, array $options = []) 
     {
-        $this->addEvent('location', $uri, $options);
+        return $this->addEvent('location', $uri, $options);
     }
 
     /**
      * Add a render Datastar view event
      */
-    public function addRenderDatastarView(string $view, array $variables = []): void
+    public function addRenderDatastarView(string $view, array $variables = []) 
     {
-        $this->addEvent('renderDatastarView', $view, $variables);
+        return $this->addEvent('renderDatastarView', $view, $variables);
     }
 
     /**
      * Add a toast notification event
      */
-    public function addToastify(string $type, string $message): void
+    public function addToastify(string $type, string $message) 
     {
-        $this->addEvent('executeScript', "showToast('{$type}', '{$message}');");
+        return $this->addEvent('executeScript', "showToast('{$type}', '{$message}');");
     }
 
     /**

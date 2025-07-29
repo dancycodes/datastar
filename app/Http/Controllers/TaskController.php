@@ -50,16 +50,14 @@ class TaskController extends Controller // implements HasMiddleware
             );
         }
 
-        $this->addPatchSignals([
+        return $this->addPatchSignals([
             'title' => '',
-        ]);
-
-        $this->addToastify(
-            'success',
-            __('Task created successfully!')
-        );
-
-        return $this->sendEvents();
+        ])
+            ->addToastify(
+                'success',
+                __('Task created successfully!')
+            )
+            ->sendEvents();
     }
 
     public function destroy(Task $task)
@@ -74,12 +72,10 @@ class TaskController extends Controller // implements HasMiddleware
             $this->addPatchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
         }
 
-        $this->addToastify(
+        return $this->addToastify(
             'success',
             __('Task deleted successfully!')
-        );
-
-        return $this->sendEvents();
+        )->sendEvents();
     }
 
     public function toggleComplete(Task $task)
@@ -88,37 +84,31 @@ class TaskController extends Controller // implements HasMiddleware
             'is_completed' => !$task->is_completed,
         ]);
 
-        $this->addPatchElements(view('components.tasks.item', compact('task'))->fragment('task-description'));
-
-        $this->addToastify(
-            'success',
-            $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
-        );
-
-        return $this->sendEvents();
+        return $this->addPatchElements(view('components.tasks.item', compact('task'))->fragment('task-description'))
+            ->addToastify(
+                'success',
+                $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
+            )
+            ->sendEvents();
     }
 
     public function getForm(Task $task)
     {
-        $this->addPatchSignals([
+        return $this->addPatchSignals([
             "title_{$task->id}" => $task->title,
             "due_date_{$task->id}" => $task->due_date->format('Y-m-d'),
             'errors' => [
                 "title_{$task->id}" => '',
                 "due_date_{$task->id}" => '',
             ],
-        ]);
-
-        $this->addPatchElements(view('components.tasks.form', compact('task')));
-
-        return $this->sendEvents();
+        ])
+            ->addPatchElements(view('components.tasks.form', compact('task')))
+            ->sendEvents();
     }
 
     public function getItem(Task $task)
     {
-        $this->addPatchElements(view('components.tasks.item', compact('task')));
-
-        return $this->sendEvents();
+        return $this->addPatchElements(view('components.tasks.item', compact('task')))->sendEvents();
     }
 
     public function update(Task $task)
@@ -135,13 +125,11 @@ class TaskController extends Controller // implements HasMiddleware
             'due_date' => $taskData["due_date_{$task->id}"],
         ]);
 
-        $this->addPatchElements(view('components.tasks.item', compact('task')));
-
-        $this->addToastify(
-            'success',
-            __('Task updated successfully!')
-        );
-
-        return $this->sendEvents();
+        return $this->addPatchElements(view('components.tasks.item', compact('task')))
+            ->addToastify(
+                'success',
+                __('Task updated successfully!')
+            )
+            ->sendEvents();
     }
 }
