@@ -65,8 +65,8 @@ trait DatastarHelpers
                     'errors' => array_map(function ($error) {
                         return is_array($error) ? $error[0] : $error;
                     }, $validator->errors()->toArray()),
-                ]);
-                $this->toastify('error', __('Check the form for errors.'));
+                ])
+                    ->toastify('error', __('Check the form for errors.'));
 
                 // Throw exception with the streamed response
                 throw new DatastarValidationException($this->getEventStream());
@@ -92,8 +92,8 @@ trait DatastarHelpers
         return $newRules;
     }
 
-    protected function toastify(string $type, string $message): void
+    protected function toastify(string $type, string $message)
     {
-        $this->executeScript("showToast('{$type}', '{$message}');");
+        return $this->executeScript("showToast('{$type}', '{$message}');");
     }
 }
