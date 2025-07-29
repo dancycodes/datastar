@@ -32,7 +32,7 @@
 
                 <button
                     class="btn"
-                    data-on-click="@post('{{ route('login.post') }}', {headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}})"
+                    data-on-click="{{ datastar()->post(['AuthController', 'login']) }}"
                     data-attr-disabled="!($email && $password)"
                 >
                     {{ __('Login') }}

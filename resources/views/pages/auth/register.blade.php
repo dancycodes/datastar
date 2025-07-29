@@ -48,7 +48,7 @@
 
                 <button
                     class="btn"
-                    data-on-click="@post('{{ route('register.post') }}', {headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}'}})"
+                    data-on-click="{{ datastar()->post(['AuthController', 'register']) }}"
                     data-attr-disabled="!($name && $email && $password && $password_confirmation)"
                 >
                     {{ __('Register') }}
