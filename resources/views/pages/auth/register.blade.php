@@ -7,7 +7,7 @@
 ?>
 
 <x-layouts.app>
-    <div class="flex items-center justify-center">   
+    <div class="flex items-center justify-center">
         <x-ui.card>
             <x-ui.image-title
                 :src="asset('images/datastar.jpg')"
