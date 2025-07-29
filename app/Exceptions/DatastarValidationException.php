@@ -3,11 +3,11 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DatastarValidationException extends Exception
 {
-    protected $response;
+    protected StreamedResponse $response;
 
     public function __construct($response, $message = "Datastar validation failed", $code = 0, Exception $previous = null)
     {
@@ -21,7 +21,7 @@ class DatastarValidationException extends Exception
     }
 
 
-    public function render($request)
+    public function render()
     {
         return $this->response;
     }

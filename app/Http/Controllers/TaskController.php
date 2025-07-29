@@ -4,19 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Traits\DatastarHelpers;
-// use Illuminate\Routing\Controllers\HasMiddleware;
-// use Illuminate\Routing\Controllers\Middleware;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class TaskController extends Controller // implements HasMiddleware
+class TaskController extends Controller
 {
     use DatastarHelpers;
-
-    // public static function middleware(): array
-    // {
-    //     return [
-    //         'auth'
-    //     ];
-    // }
 
     protected function rules(): array
     {
@@ -26,7 +18,7 @@ class TaskController extends Controller // implements HasMiddleware
         ];
     }
 
-    public function store()
+    public function store(): StreamedResponse
     {
         $signals = $this->readSignals();
 
@@ -35,13 +27,12 @@ class TaskController extends Controller // implements HasMiddleware
             $this->rules()
         );
 
-
         $task = auth()->user()->tasks()->create($task_data);
 
         if (auth()->user()->tasks()->count() === 1) {
-            $this->addPatchElements(view('pages.todos', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
+            $this->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
         } else {
-            $this->addPatchElements(
+            $this->patchElements(
                 view('components.tasks.item', compact('task')),
                 [
                     'selector' => '#task-list',
@@ -50,57 +41,57 @@ class TaskController extends Controller // implements HasMiddleware
             );
         }
 
-        $this->addPatchSignals([
+        $this->patchSignals([
             'title' => '',
         ]);
 
-        $this->addToastify(
+        $this->toastify(
             'success',
             __('Task created successfully!')
         );
 
-        return $this->sendEvents();
+        return $this->getEventStream();
     }
 
-    public function destroy(Task $task)
+    public function destroy(Task $task): StreamedResponse
     {
         $id = $task->id;
 
         $task->delete();
 
-        $this->addRemoveElements("#task-{$id}");
+        $this->removeElements("#task-{$id}");
 
         if (auth()->user()->tasks()->count() === 0) {
-            $this->addPatchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
+            $this->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
         }
 
-        $this->addToastify(
+        $this->toastify(
             'success',
             __('Task deleted successfully!')
         );
 
-        return $this->sendEvents();
+        return $this->getEventStream();
     }
 
-    public function toggleComplete(Task $task)
+    public function toggleComplete(Task $task): StreamedResponse
     {
         $task->update([
             'is_completed' => !$task->is_completed,
         ]);
 
-        $this->addPatchElements(view('components.tasks.item', compact('task'))->fragment('task-description'));
+        $this->patchElements(view('components.tasks.item', compact('task'))->fragment('task-description'));
 
-        $this->addToastify(
+        $this->toastify(
             'success',
             $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
         );
 
-        return $this->sendEvents();
+        return $this->getEventStream();
     }
 
-    public function getForm(Task $task)
+    public function getForm(Task $task): StreamedResponse
     {
-        $this->addPatchSignals([
+        $this->patchSignals([
             "title_{$task->id}" => $task->title,
             "due_date_{$task->id}" => $task->due_date->format('Y-m-d'),
             'errors' => [
@@ -109,19 +100,19 @@ class TaskController extends Controller // implements HasMiddleware
             ],
         ]);
 
-        $this->addPatchElements(view('components.tasks.form', compact('task')));
+        $this->patchElements(view('components.tasks.form', compact('task')));
 
-        return $this->sendEvents();
+        return $this->getEventStream();
     }
 
-    public function getItem(Task $task)
+    public function getItem(Task $task): StreamedResponse
     {
-        $this->addPatchElements(view('components.tasks.item', compact('task')));
+        $this->patchElements(view('components.tasks.item', compact('task')));
 
-        return $this->sendEvents();
+        return $this->getEventStream();
     }
 
-    public function update(Task $task)
+    public function update(Task $task): StreamedResponse
     {
         $signals = $this->readSignals();
 
@@ -135,13 +126,13 @@ class TaskController extends Controller // implements HasMiddleware
             'due_date' => $taskData["due_date_{$task->id}"],
         ]);
 
-        $this->addPatchElements(view('components.tasks.item', compact('task')));
+        $this->patchElements(view('components.tasks.item', compact('task')));
 
-        $this->addToastify(
+        $this->toastify(
             'success',
             __('Task updated successfully!')
         );
 
-        return $this->sendEvents();
+        return $this->getEventStream();
     }
 }
