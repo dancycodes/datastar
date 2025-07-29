@@ -36,7 +36,9 @@ class AuthController extends Controller
 
         auth()->login($user);
 
-        return $this->addLocation(route('verification.notice'))->sendEvents();
+        $this->addLocation(route('verification.notice'));
+
+        return $this->sendEvents();
     }
 
     public function logout()
@@ -46,7 +48,9 @@ class AuthController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        return $this->addLocation(route('home'))->sendEvents();
+        $this->addLocation(route('home'));
+
+        return $this->sendEvents();
     }
 
     public function login()
@@ -82,10 +86,10 @@ class AuthController extends Controller
         if ($user) {
             // Check if user already has a valid OTP
             if ($this->otpService->hasValidOtp($user, OtpService::TYPE_PASSWORD)) {
-                return $this->addPatchElements(view('components.auth.forgot-password')->fragment('otp-field'))
-                    ->addPatchSignals($validated)
-                    ->addToastify('info', __('An OTP code has already been sent to your email.'))
-                    ->sendEvents();
+                $this->addPatchElements(view('components.auth.forgot-password')->fragment('otp-field'));
+                $this->addPatchSignals($validated);
+                $this->addToastify('info', __('An OTP code has already been sent to your email.'));
+                return $this->sendEvents();
             }
 
             // Generate and send new OTP
@@ -98,10 +102,11 @@ class AuthController extends Controller
             ];
         }
 
-        return $this->addPatchElements(view('components.auth.forgot-password')->fragment('otp-field'))
-            ->addPatchSignals($validated)
-            ->addToastify('success', $result['message'])
-            ->sendEvents();
+        $this->addPatchElements(view('components.auth.forgot-password')->fragment('otp-field'));
+        $this->addPatchSignals($validated);
+        $this->addToastify('success', $result['message']);
+
+        return $this->sendEvents();
     }
 
     public function verifyOtp()
@@ -119,9 +124,9 @@ class AuthController extends Controller
             $result = $this->otpService->verifyOtp($user, $validated['otp'], OtpService::TYPE_PASSWORD);
 
             if ($result['success']) {
-                $this->addPatchElements(view('components.auth.forgot-password')->fragment('password-field'))
-                    ->addPatchSignals($validated)
-                    ->addToastify('success', $result['message']);
+                $this->addPatchElements(view('components.auth.forgot-password')->fragment('password-field'));
+                $this->addPatchSignals($validated);
+                $this->addToastify('success', $result['message']);
             } else {
                 $this->addToastify('error', $result['message']);
             }
@@ -155,7 +160,9 @@ class AuthController extends Controller
 
     public function getForgotPasswordEmailField()
     {
-        return $this->addPatchElements(view('components.auth.forgot-password')->fragment('email-field'))->sendEvents();
+        $this->addPatchElements(view('components.auth.forgot-password')->fragment('email-field'));
+
+        return $this->sendEvents();
     }
 
     public function resetPassword()
@@ -181,8 +188,8 @@ class AuthController extends Controller
                 // Clean up password OTPs
                 $user->otps()->where('type', OtpService::TYPE_PASSWORD)->delete();
 
-                $this->addToastify('success', __('Password reset successfully! You can now login with your new password.'))
-                    ->addLocation(route('login'));
+                $this->addToastify('success', __('Password reset successfully! You can now login with your new password.'));
+                $this->addLocation(route('login'));
             } else {
                 $this->addToastify('error', $otpResult['message']);
             }
@@ -198,18 +205,22 @@ class AuthController extends Controller
         $user = auth()->user();
 
         if ($user->hasVerifiedEmail()) {
-            return $this->addToastify('info', __('Your email is already verified.'))->sendEvents();
+            $this->addToastify('info', __('Your email is already verified.'));
+            return $this->sendEvents();
         }
 
         // Check if user already has a valid OTP
         if ($this->otpService->hasValidOtp($user, OtpService::TYPE_EMAIL)) {
-            return $this->addToastify('info', __('An email verification code has already been sent to your email.'))->sendEvents();
+            $this->addToastify('info', __('An email verification code has already been sent to your email.'));
+            return $this->sendEvents();
         }
 
         // Generate and send email verification OTP
         $result = $this->otpService->generateAndSendOtp($user, OtpService::TYPE_EMAIL);
 
-        return $this->addToastify('success', $result['message'])->sendEvents();
+        $this->addToastify('success', $result['message']);
+
+        return $this->sendEvents();
     }
 
     public function verifyEmailOtp()
@@ -223,9 +234,9 @@ class AuthController extends Controller
         $user = auth()->user();
 
         if ($user->hasVerifiedEmail()) {
-            return $this->addToastify('info', __('Your email is already verified.'))
-                ->addLocation(route('todos.index'))
-                ->sendEvents();
+            $this->addToastify('info', __('Your email is already verified.'));
+            $this->addLocation(route('todos.index'));
+            return $this->sendEvents();
         }
 
         // Verify the OTP
@@ -248,12 +259,15 @@ class AuthController extends Controller
         $user = auth()->user();
 
         if ($user->hasVerifiedEmail()) {
-            return $this->addToastify('info', __('Your email is already verified.'))->sendEvents();
+            $this->addToastify('info', __('Your email is already verified.'));
+            return $this->sendEvents();
         }
 
         // Resend email verification OTP
         $result = $this->otpService->resendOtp($user, OtpService::TYPE_EMAIL);
 
-        return $this->addToastify('success', $result['message'])->sendEvents();
+        $this->addToastify('success', $result['message']);
+
+        return $this->sendEvents();
     }
 }
