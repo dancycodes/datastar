@@ -41,16 +41,14 @@ class TaskController extends Controller
             );
         }
 
-        $this->patchSignals([
+        return $this->patchSignals([
             'title' => '',
-        ]);
-
-        $this->toastify(
-            'success',
-            __('Task created successfully!')
-        );
-
-        return $this->getEventStream();
+        ])
+            ->toastify(
+                'success',
+                __('Task created successfully!')
+            )
+            ->getEventStream();
     }
 
     public function destroy(Task $task): StreamedResponse
@@ -65,12 +63,11 @@ class TaskController extends Controller
             $this->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
         }
 
-        $this->toastify(
+        return $this->toastify(
             'success',
             __('Task deleted successfully!')
-        );
-
-        return $this->getEventStream();
+        )
+            ->getEventStream();
     }
 
     public function toggleComplete(Task $task): StreamedResponse
@@ -79,37 +76,32 @@ class TaskController extends Controller
             'is_completed' => !$task->is_completed,
         ]);
 
-        $this->patchElements(view('components.tasks.item', compact('task'))->fragment('task-description'));
-
-        $this->toastify(
-            'success',
-            $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
-        );
-
-        return $this->getEventStream();
+        return $this->patchElements(view('components.tasks.item', compact('task'))->fragment('task-description'))
+            ->toastify(
+                'success',
+                $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
+            )
+            ->getEventStream();
     }
 
     public function getForm(Task $task): StreamedResponse
     {
-        $this->patchSignals([
+        return $this->patchSignals([
             "title_{$task->id}" => $task->title,
             "due_date_{$task->id}" => $task->due_date->format('Y-m-d'),
             'errors' => [
                 "title_{$task->id}" => '',
                 "due_date_{$task->id}" => '',
             ],
-        ]);
-
-        $this->patchElements(view('components.tasks.form', compact('task')));
-
-        return $this->getEventStream();
+        ])
+            ->patchElements(view('components.tasks.form', compact('task')))
+            ->getEventStream();
     }
 
     public function getItem(Task $task): StreamedResponse
     {
-        $this->patchElements(view('components.tasks.item', compact('task')));
-
-        return $this->getEventStream();
+        return $this->patchElements(view('components.tasks.item', compact('task')))
+            ->getEventStream();
     }
 
     public function update(Task $task): StreamedResponse
@@ -126,13 +118,11 @@ class TaskController extends Controller
             'due_date' => $taskData["due_date_{$task->id}"],
         ]);
 
-        $this->patchElements(view('components.tasks.item', compact('task')));
-
-        $this->toastify(
-            'success',
-            __('Task updated successfully!')
-        );
-
-        return $this->getEventStream();
+        return $this->patchElements(view('components.tasks.item', compact('task')))
+            ->toastify(
+                'success',
+                __('Task updated successfully!')
+            )
+            ->getEventStream();
     }
 }
