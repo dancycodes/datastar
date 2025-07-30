@@ -4,11 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Traits\DatastarHelpers;
+use Illuminate\Http\Request;
+use Closure;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class TaskController extends Controller
+class TaskController extends Controller implements HasMiddleware
 {
     use DatastarHelpers;
+
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('verified', only: ['toggleComplete', 'destroy']),
+            new Middleware(function (Request $request, Closure $next) {
+                if (auth()->user()->tasks()->count() === 1) {
+                    throw new \Exception(__('Only 1 task... TEST WORKS'));
+                }
+                return $next($request);
+            }, except: ['store', 'toggleComplete', 'getForm', 'getItem']),
+        ];
+    }
 
     protected function rules(): array
     {
