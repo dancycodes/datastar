@@ -6,7 +6,8 @@
 
     name('todos.index');
 
-    middleware(['auth', 'verified']);
+    // middleware(['auth', 'verified']);
+    middleware(['auth']);
 
     render(function (View $view) {
         return $view->with('tasks', auth()->user()->tasks()->latest()->get());
