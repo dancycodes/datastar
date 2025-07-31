@@ -12,7 +12,7 @@
 
             <button
                 class="btn"
-                data-on-click="{{ datastar()->post(['AuthController', 'verifyOtp']) }}"
+                data-on-click="{{ datastar()->action(['AuthController', 'verifyOtp']) }}"
                 data-attr-disabled="!($email && $otp)"
             >
                 {{ __('Verify') }}
@@ -20,7 +20,7 @@
 
             <button
                 class="btn"
-                data-on-click="{{ datastar()->post(['AuthController', 'resendOtp']) }}"
+                data-on-click="{{ datastar()->action(['AuthController', 'resendOtp']) }}"
             >
                 {{ __('Resend OTP') }}
             </button>
@@ -40,7 +40,7 @@
 
         <button
             class="btn"
-            data-on-click="{{ datastar()->post(['AuthController', 'sendOtp']) }}"
+            data-on-click="{{ datastar()->action(['AuthController', 'sendOtp']) }}"
             data-attr-disabled="!($email)"
         >
             {{ __('Send OTP code') }}
@@ -66,7 +66,7 @@
 
         <button
             class="btn"
-            data-on-click="{{ datastar()->post(['AuthController', 'resetPassword']) }}"
+            data-on-click="{{ datastar()->action(['AuthController', 'resetPassword']) }}"
             data-attr-disabled="!($email && $otp && $password && $password_confirmation)"
         >
             {{ __('Reset Password') }}

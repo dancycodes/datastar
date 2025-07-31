@@ -10,15 +10,15 @@
         if (auth()->user()->hasVerifiedEmail()) {
             return redirect()->route('todos.index');
         }
-        
+
         return $view;
     });
 ?>
 
 <x-layouts.app>
-    <div 
+    <div
         class="flex justify-center"
-    >   
+    >
         <x-ui.card>
             <x-ui.image-title
                 :src="asset('images/datastar.jpg')"
@@ -43,7 +43,7 @@
 
                     <button
                         class="btn"
-                        data-on-click="{{ datastar()->post(['AuthController', 'verifyEmailOtp']) }}"
+                        data-on-click="{{ datastar()->action(['AuthController', 'verifyEmailOtp']) }}"
                         data-attr-disabled="!($otp && $otp.length === 6)"
                     >
                         {{ __('Verify Email') }}
@@ -54,27 +54,27 @@
                     <div class="text-center text-sm text-gray-600">
                         {{ __('Didn\'t receive the code?') }}
                     </div>
-                    
+
                     <div class="flex gap-2">
                         <button
                             class="btn flex-1"
-                            data-on-click="{{ datastar()->post(['AuthController', 'resendEmailVerificationOtp']) }}"
+                            data-on-click="{{ datastar()->action(['AuthController', 'resendEmailVerificationOtp']) }}"
                         >
                             {{ __('Resend Code') }}
                         </button>
-                        
+
                         <button
                             class="btn bg-gray-500 hover:bg-gray-600 flex-1"
-                            data-on-click="{{ datastar()->post(['AuthController', 'sendEmailVerificationOtp']) }}"
+                            data-on-click="{{ datastar()->action(['AuthController', 'sendEmailVerificationOtp']) }}"
                         >
                             {{ __('Send New Code') }}
                         </button>
                     </div>
-                    
+
                     <div class="text-center">
-                        <button 
+                        <button
                             class="link text-sm"
-                            data-on-click="{{ datastar()->post(['AuthController','logout']) }}"
+                            data-on-click="{{ datastar()->action(['AuthController','logout']) }}"
                         >
                             {{ __('Sign out and use different email') }}
                         </button>

@@ -17,7 +17,7 @@
 </head>
 <body class="bg-gray-50 min-h-screen">
     <div id="toast-notifier" class="fixed top-5 right-5 z-50 space-y-3 max-w-sm w-full"></div>
-    
+
     <!-- Main Content -->
     <main class="w-full max-w-4xl mx-auto p-4 space-y-8">
         <!-- Top Navigation & Logo -->
@@ -31,16 +31,16 @@
                     <p class="text-sm text-gray-600">Reactive web apps without JavaScript frameworks</p>
                 </div>
             </div>
-            
+
             <!-- Auth Navigation -->
             <nav class="flex flex-wrap items-center justify-center gap-3">
                 @auth
                     <a href="{{ route('todos.index') }}" class="link">
                         {{ __('My Todos') }}
                     </a>
-                    <button 
+                    <button
                         class="btn !w-auto !px-3 !py-1.5 !text-sm"
-                        data-on-click="{{ datastar()->post(['AuthController','logout']) }}"
+                        data-on-click="{{ datastar()->action(['AuthController','logout']) }}"
                     >
                         {{ __('Logout') }}
                     </button>
@@ -68,7 +68,7 @@
                     Server-sent events meet Laravel elegance. Build reactive UIs with zero JavaScript complexity.
                 </p>
             </div>
-            
+
             <div class="flex flex-wrap items-center justify-center gap-4">
                 @auth
                     <a href="{{ route('todos.index') }}" class="btn !w-auto !px-6">
@@ -128,7 +128,7 @@
         <div class="p-4 bg-white rounded shadow space-y-4 mb-12">
             <div class="text-center space-y-6">
                 <h3 class="text-2xl font-semibold text-gray-900">Built With</h3>
-                
+
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div class="text-center space-y-2">
                         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto">

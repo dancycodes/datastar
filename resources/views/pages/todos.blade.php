@@ -11,21 +11,21 @@
 
     render(function (View $view) {
         return $view->with('tasks', auth()->user()->tasks()->latest()->get());
-    }); 
+    });
 
 ?>
 
 <x-layouts.app>
     <div class="w-full max-w-lg mx-auto space-y-4">
         <div class="w-full text-right">
-            <button 
+            <button
                 class="btn-danger !w-fit !mx-auto"
-                data-on-click="{{ datastar()->post(['AuthController','logout']) }}"
+                data-on-click="{{ datastar()->action(['AuthController','logout']) }}"
             >
                 {{ __('Logout') }}
             </button>
         </div>
-        
+
 
         <div class="text-center space-y-2">
             <h1 class="text-2xl font-semibold">{{ __('LARAVEL + DATASTAR Simple ToDo') }}</h1>
@@ -58,7 +58,7 @@
 
                 <button
                     class="btn"
-                    data-on-click="{{ datastar()->post(['TaskController', 'store']) }}"
+                    data-on-click="{{ datastar()->action(['TaskController', 'store']) }}"
                     data-attr-disabled="!($title && $due_date)"
                 >
                     {{ __('Add Task') }}
@@ -86,7 +86,7 @@
             @endfragment
         </div>
 
-        
+
 
     </div>
 </x-layouts.app>

@@ -1,4 +1,4 @@
- @props([ 
+ @props([
     'label' => null,
     'name' => '',
     'placeholder' => '',
@@ -15,14 +15,14 @@
         @if($label)
             <label for="{{ $name }}" class="text-sm font-medium">{{ $label }}</label>
         @endif
-        <input 
-            id="{{ $name }}" 
-            data-bind="{{ $name }}" 
-            type="{{ $type }}" 
-            class="text-sm w-full outline-none focus:border-2 focus:border-blue-500 p-1.5 border rounded" 
+        <input
+            id="{{ $name }}"
+            data-bind="{{ $name }}"
+            type="{{ $type }}"
+            class="text-sm w-full outline-none focus:border-2 focus:border-blue-500 p-1.5 border rounded"
             placeholder="{{ $placeholder }}"
             @if($field_validates_controller)
-                data-on-{{ $field_validates_on }}="{{ datastar()->post([$field_validates_controller, 'fieldValidate'], ['field' => $name, 'key' => $field_validates_key]) }}"
+                data-on-{{ $field_validates_on }}="{{ datastar()->action([$field_validates_controller, 'fieldValidate'], ['field' => $name, 'key' => $field_validates_key]) }}"
             @endif
             >
         @if($has_validation)

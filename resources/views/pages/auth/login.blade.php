@@ -32,7 +32,7 @@
 
                 <button
                     class="btn"
-                    data-on-click="{{ datastar()->post(['AuthController', 'login']) }}"
+                    data-on-click="{{ datastar()->action(['AuthController', 'login']) }}"
                     data-attr-disabled="!($email && $password)"
                 >
                     {{ __('Login') }}
