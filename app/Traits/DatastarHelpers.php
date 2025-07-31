@@ -13,6 +13,12 @@ trait DatastarHelpers
 
     public function fieldValidate($field, $key = null): StreamedResponse
     {
+        // throw new \Exception(__('Only 1 task... TEST WORKS'));
+        // abort(403, __('You cannot create a task when you already have one. Please delete the existing task first.'));
+        // return redirect()->route('verification.notice');
+        dump('Only 1 task... TEST WORKS');
+        dd('Show with the previous');
+
         $rules = $this->rules();
 
         if ($key) {
