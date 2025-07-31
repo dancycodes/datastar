@@ -1,7 +1,7 @@
 <div id="task-{{ $task->id }}" class="bg-gray-200 p-2 shadow rounded overflow-hidden">
     <div class="flex justify-between items-center ">
         <div class="flex gap-x-2 items-center">
-            <input data-on-change="{{ datastar()->patch(['TaskController', 'toggleComplete'], ['task' => $task->id]) }}" type="checkbox" class="form-checkbox h-4 w-4 text-blue-600" @if($task->is_completed) checked @endif />
+            <input data-on-change="{{ datastar()->action(['TaskController', 'toggleComplete'], ['task' => $task->id]) }}" type="checkbox" class="form-checkbox h-4 w-4 text-blue-600" @if($task->is_completed) checked @endif />
             @fragment('task-description')
                 <div id="task-description-{{ $task->id }}">
                     <h3 class="text-sm font-semibold {{ $task->is_completed ? 'line-through text-gray-500' : '' }}">{{ $task->title }}</h3>
@@ -26,7 +26,7 @@
             </button>
             <button
                 title="delete"
-                data-on-click="{{ datastar()->delete(['TaskController', 'destroy'], ['task' => $task->id]) }}"
+                data-on-click="{{ datastar()->action(['TaskController', 'destroy'], ['task' => $task->id]) }}"
             >
                 <svg class="w-5 h-5 text-red-800 cursor-pointer hover:text-red-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>

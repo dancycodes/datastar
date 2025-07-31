@@ -3152,12 +3152,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/putyourlightson/laravel-datastar.git",
-                "reference": "e8075c7c489b4ef395a9b0376a6110e7e12a52eb"
+                "reference": "523257be50ddef291a465886ef1b949806f660d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/e8075c7c489b4ef395a9b0376a6110e7e12a52eb",
-                "reference": "e8075c7c489b4ef395a9b0376a6110e7e12a52eb",
+                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/523257be50ddef291a465886ef1b949806f660d2",
+                "reference": "523257be50ddef291a465886ef1b949806f660d2",
                 "shasum": ""
             },
             "require": {
@@ -3202,7 +3202,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-29T21:22:43+00:00"
+            "time": "2025-07-31T08:22:00+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -3404,16 +3404,16 @@
         },
         {
             "name": "starfederation/datastar-php",
-            "version": "1.0.0-RC.2",
+            "version": "1.0.0-RC.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/starfederation/datastar-php.git",
-                "reference": "993e98b9d6f4de9662067b89723fc1bcefc7e3b9"
+                "reference": "4990d27208d2e3c1b34cb874cbd258c55dc984f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/starfederation/datastar-php/zipball/993e98b9d6f4de9662067b89723fc1bcefc7e3b9",
-                "reference": "993e98b9d6f4de9662067b89723fc1bcefc7e3b9",
+                "url": "https://api.github.com/repos/starfederation/datastar-php/zipball/4990d27208d2e3c1b34cb874cbd258c55dc984f8",
+                "reference": "4990d27208d2e3c1b34cb874cbd258c55dc984f8",
                 "shasum": ""
             },
             "require": {
@@ -3447,7 +3447,7 @@
                 "issues": "https://github.com/starfederation/datastar-php/issues",
                 "source": "https://github.com/starfederation/datastar-php"
             },
-            "time": "2025-07-16T10:39:01+00:00"
+            "time": "2025-07-30T11:56:13+00:00"
         },
         {
             "name": "symfony/clock",
@@ -7050,16 +7050,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.27",
+            "version": "11.5.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "446d43867314781df7e9adf79c3ec7464956fd8f"
+                "reference": "93f30aa3889e785ac63493d4976df0ae9fdecb60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/446d43867314781df7e9adf79c3ec7464956fd8f",
-                "reference": "446d43867314781df7e9adf79c3ec7464956fd8f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/93f30aa3889e785ac63493d4976df0ae9fdecb60",
+                "reference": "93f30aa3889e785ac63493d4976df0ae9fdecb60",
                 "shasum": ""
             },
             "require": {
@@ -7131,7 +7131,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.27"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.28"
             },
             "funding": [
                 {
@@ -7155,7 +7155,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-07-11T04:10:06+00:00"
+            "time": "2025-07-31T07:10:28+00:00"
         },
         {
             "name": "sebastian/cli-parser",

@@ -48,7 +48,7 @@
 
                 <button
                     class="btn"
-                    data-on-click="{{ datastar()->post(['AuthController', 'register']) }}"
+                    data-on-click="{{ datastar()->action(['AuthController', 'register']) }}"
                     data-attr-disabled="!($name && $email && $password && $password_confirmation)"
                 >
                     {{ __('Register') }}
