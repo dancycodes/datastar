@@ -2,132 +2,132 @@ import "./bootstrap";
 
 // DATASTAR Error Handling for Development
 // Shows Laravel error pages in modal overlay during Datastar requests
-document.addEventListener("DOMContentLoaded", function () {
-    //Enhanced fetch interception for better error capture
-    const originalFetch = window.fetch;
-    window.fetch = async function (url, options = {}) {
-        try {
-            const response = await originalFetch.apply(this, arguments);
+// document.addEventListener("DOMContentLoaded", function () {
+//     //Enhanced fetch interception for better error capture
+//     const originalFetch = window.fetch;
+//     window.fetch = async function (url, options = {}) {
+//         try {
+//             const response = await originalFetch.apply(this, arguments);
 
-            // Check if this is a Datastar request and has an error status
-            const isDatastarRequest =
-                options.headers?.["Datastar-Request"] ||
-                (options.headers && options.headers["Datastar-Request"]);
+//             // Check if this is a Datastar request and has an error status
+//             const isDatastarRequest =
+//                 options.headers?.["Datastar-Request"] ||
+//                 (options.headers && options.headers["Datastar-Request"]);
 
-            if (
-                !response.ok &&
-                (isDatastarRequest ||
-                    (typeof url === "string" &&
-                        url.includes("/") &&
-                        response.status >= 400))
-            ) {
-                // Clone response to read content without consuming it
-                const responseClone = response.clone();
-                const html = await responseClone.text();
+//             if (
+//                 !response.ok &&
+//                 (isDatastarRequest ||
+//                     (typeof url === "string" &&
+//                         url.includes("/") &&
+//                         response.status >= 400))
+//             ) {
+//                 // Clone response to read content without consuming it
+//                 const responseClone = response.clone();
+//                 const html = await responseClone.text();
 
-                // Only show modal for HTML error responses (likely Laravel error pages)
-                const contentType = response.headers.get("content-type") || "";
-                if (
-                    (contentType.includes("text/html") &&
-                        html.includes("<!DOCTYPE")) ||
-                    html.includes("<html") ||
-                    response.status >= 400
-                ) {
-                    showErrorModal(html);
-                }
-            }
+//                 // Only show modal for HTML error responses (likely Laravel error pages)
+//                 const contentType = response.headers.get("content-type") || "";
+//                 if (
+//                     (contentType.includes("text/html") &&
+//                         html.includes("<!DOCTYPE")) ||
+//                     html.includes("<html") ||
+//                     response.status >= 400
+//                 ) {
+//                     showErrorModal(html);
+//                 }
+//             }
 
-            return response;
-        } catch (error) {
-            console.error("🚨 Fetch error:", error);
-            showErrorModal(`
-                <h1>Network Error</h1>
-                <p><strong>URL:</strong> ${url}</p>
-                <p><strong>Error:</strong> ${error.message}</p>
-                <p><strong>Type:</strong> ${error.name || "Unknown"}</p>
-            `);
-            throw error; // Re-throw to maintain normal error handling
-        }
-    };
+//             return response;
+//         } catch (error) {
+//             console.error("🚨 Fetch error:", error);
+//             showErrorModal(`
+//                 <h1>Network Error</h1>
+//                 <p><strong>URL:</strong> ${url}</p>
+//                 <p><strong>Error:</strong> ${error.message}</p>
+//                 <p><strong>Type:</strong> ${error.name || "Unknown"}</p>
+//             `);
+//             throw error; // Re-throw to maintain normal error handling
+//         }
+//     };
 
-    // Modal creation function (same as your HTMX version)
-    function showErrorModal(html) {
-        // Remove existing modal if present
-        const existingModal = document.getElementById("datastar-error-modal");
-        if (existingModal) {
-            existingModal.remove();
-        }
+//     // Modal creation function (same as your HTMX version)
+//     function showErrorModal(html) {
+//         // Remove existing modal if present
+//         const existingModal = document.getElementById("datastar-error-modal");
+//         if (existingModal) {
+//             existingModal.remove();
+//         }
 
-        // Create full-screen error modal
-        const modal = document.createElement("div");
-        modal.id = "datastar-error-modal";
-        Object.assign(modal.style, {
-            position: "fixed",
-            inset: "0",
-            background: "rgba(0,0,0,0.8)",
-            overflow: "auto",
-            zIndex: "9999",
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "center",
-            padding: "2rem",
-        });
+//         // Create full-screen error modal
+//         const modal = document.createElement("div");
+//         modal.id = "datastar-error-modal";
+//         Object.assign(modal.style, {
+//             position: "fixed",
+//             inset: "0",
+//             background: "rgba(0,0,0,0.8)",
+//             overflow: "auto",
+//             zIndex: "9999",
+//             display: "flex",
+//             alignItems: "flex-start",
+//             justifyContent: "center",
+//             padding: "2rem",
+//         });
 
-        // Error content container
-        const inner = document.createElement("div");
-        Object.assign(inner.style, {
-            background: "#f5f5f5",
-            padding: "1.5rem",
-            borderRadius: "8px",
-            boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
-            maxWidth: "90vw",
-            maxHeight: "90vh",
-            width: "1000px",
-            position: "relative",
-            overflow: "auto",
-        });
+//         // Error content container
+//         const inner = document.createElement("div");
+//         Object.assign(inner.style, {
+//             background: "#f5f5f5",
+//             padding: "1.5rem",
+//             borderRadius: "8px",
+//             boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+//             maxWidth: "90vw",
+//             maxHeight: "90vh",
+//             width: "1000px",
+//             position: "relative",
+//             overflow: "auto",
+//         });
 
-        // Close button
-        const closeBtn = document.createElement("button");
-        closeBtn.innerHTML = "&times;";
-        Object.assign(closeBtn.style, {
-            position: "absolute",
-            top: "0.5rem",
-            right: "0.5rem",
-            fontSize: "2rem",
-            lineHeight: "1",
-            background: "#ff4444",
-            color: "white",
-            border: "none",
-            borderRadius: "50%",
-            width: "30px",
-            height: "30px",
-            cursor: "pointer",
-            zIndex: "1",
-        });
-        closeBtn.addEventListener("click", () => modal.remove());
+//         // Close button
+//         const closeBtn = document.createElement("button");
+//         closeBtn.innerHTML = "&times;";
+//         Object.assign(closeBtn.style, {
+//             position: "absolute",
+//             top: "0.5rem",
+//             right: "0.5rem",
+//             fontSize: "2rem",
+//             lineHeight: "1",
+//             background: "#ff4444",
+//             color: "white",
+//             border: "none",
+//             borderRadius: "50%",
+//             width: "30px",
+//             height: "30px",
+//             cursor: "pointer",
+//             zIndex: "1",
+//         });
+//         closeBtn.addEventListener("click", () => modal.remove());
 
-        // Keyboard close (ESC key)
-        const handleKeydown = (e) => {
-            if (e.key === "Escape") {
-                modal.remove();
-                document.removeEventListener("keydown", handleKeydown);
-            }
-        };
-        document.addEventListener("keydown", handleKeydown);
+//         // Keyboard close (ESC key)
+//         const handleKeydown = (e) => {
+//             if (e.key === "Escape") {
+//                 modal.remove();
+//                 document.removeEventListener("keydown", handleKeydown);
+//             }
+//         };
+//         document.addEventListener("keydown", handleKeydown);
 
-        // Assemble modal
-        inner.appendChild(closeBtn);
-        const content = document.createElement("div");
-        content.innerHTML = html;
-        inner.appendChild(content);
-        modal.appendChild(inner);
-        document.body.appendChild(modal);
+//         // Assemble modal
+//         inner.appendChild(closeBtn);
+//         const content = document.createElement("div");
+//         content.innerHTML = html;
+//         inner.appendChild(content);
+//         modal.appendChild(inner);
+//         document.body.appendChild(modal);
 
-        // Focus the modal for accessibility
-        modal.focus();
-    }
-});
+//         // Focus the modal for accessibility
+//         modal.focus();
+//     }
+// });
 
 window.showToast = function (type, message) {
     // Define toast configurations

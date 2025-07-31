@@ -21,9 +21,13 @@ class TaskController extends Controller implements HasMiddleware
             new Middleware(function (Request $request, Closure $next) {
                 if (auth()->user()->tasks()->count() === 1) {
                     throw new \Exception(__('Only 1 task... TEST WORKS'));
+                    // abort(403, __('You cannot create a task when you already have one. Please delete the existing task first.'));
+                    // return redirect()->route('verification.notice');
+                    // dump('Only 1 task... TEST WORKS');
+                    // dd('Show with the previous');
                 }
                 return $next($request);
-            }, except: ['store', 'toggleComplete', 'getForm', 'getItem']),
+            }),
         ];
     }
 

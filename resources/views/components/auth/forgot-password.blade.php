@@ -8,7 +8,7 @@
         />
 
         <div class="flex justify-between items-center w-full gap-1">
-            <p class="link w-full text-center" data-on-click="{{ datastar()->get(['AuthController', 'getForgotPasswordEmailField']) }}">Back</p>
+            <p class="link w-full text-center" data-on-click="{{ datastar()->action(['AuthController', 'getForgotPasswordEmailField']) }}">Back</p>
 
             <button
                 class="btn"
