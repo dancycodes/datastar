@@ -25,8 +25,6 @@
                 data-on-{{ $field_validates_on }}="{{ datastar()->action([$field_validates_controller, 'fieldValidate'], ['field' => $name, 'key' => $field_validates_key]) }}"
             @endif
             >
-        @if($has_validation)
-            <div class="text-red-500 text-sm mt-1" data-show="$errors?.{{ $name }}" data-text="$errors?.{{ $name }}"></div>
-        @endif
+        <div class="text-red-500 text-sm mt-1" data-show="$errors?.{{ $name }}" data-text="$errors?.{{ $name }}"></div>
     </div>
 @endif
