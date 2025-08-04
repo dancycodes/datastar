@@ -2,22 +2,18 @@
 
 namespace App\Traits;
 
-use App\Exceptions\DatastarValidationException;
-use Putyourlightson\Datastar\DatastarEventStream;
-use Illuminate\Support\Facades\Validator;
+use Putyourlightson\Datastar\Services\Sse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait DatastarHelpers
 {
-    use DatastarEventStream;
-
     public function fieldValidate($field, $key = null): StreamedResponse
     {
         // throw new \Exception(__('Only 1 task... TEST WORKS'));
         // abort(403, __('You cannot create a task when you already have one. Please delete the existing task first.'));
         // return redirect()->route('verification.notice');
-        dump('Only 1 task... TEST WORKS');
-        dd('Show with the previous');
+//        dump('Only 1 task... TEST WORKS');
+//        dd('Show with the previous');
 
         $rules = $this->rules();
 
@@ -28,7 +24,7 @@ trait DatastarHelpers
                     __('Field Validation setup for :field is not valid.', ['field' => $field])
                 );
 
-                return $this->getEventStream();
+                return sse()->getEventStream();
             }
             $rules = $this->setRulesKey($key);
         }
@@ -39,10 +35,10 @@ trait DatastarHelpers
                 __('Field :field is not found in rules.', ['field' => $field])
             );
 
-            return $this->getEventStream();
+            return sse()->getEventStream();
         }
 
-        $signals = $this->readSignals();
+        $signals = sse()->readSignals();
 
         if (!isset($signals[$field])) {
             $this->toastify(
@@ -50,42 +46,12 @@ trait DatastarHelpers
                 __('Field :field is not found in signals.', ['field' => $field])
             );
 
-            return $this->getEventStream();
+            return sse()->getEventStream();
         }
 
-        $this->validate(
-            $signals,
-            [$field => $rules[$field]]
-        );
+        sse()->validate([$field => $rules[$field]]);
 
-        return $this->getEventStream();
-    }
-
-    protected function validate($data, $rules, $messages = [], $attributes = [], $abortOnFailure = true): array
-    {
-        $validator = Validator::make($data, $rules, $messages, $attributes);
-
-        if ($validator->fails()) {
-            if ($abortOnFailure) {
-                $this->patchSignals([
-                    'errors' => array_map(function ($error) {
-                        return is_array($error) ? $error[0] : $error;
-                    }, $validator->errors()->toArray()),
-                ])
-                    ->toastify('error', __('Check the form for errors.'));
-
-                // Throw exception with the streamed response
-                throw new DatastarValidationException($this->getEventStream());
-            }
-
-            return $validator->errors()->toArray();
-        }
-
-        $this->patchSignals([
-            'errors' => [],
-        ]);
-
-        return $validator->validated();
+        return sse()->getEventStream();
     }
 
     protected function setRulesKey($key): array
@@ -98,8 +64,8 @@ trait DatastarHelpers
         return $newRules;
     }
 
-    protected function toastify(string $type, string $message)
+    protected function toastify(string $type, string $message): Sse
     {
-        return $this->executeScript("showToast('{$type}', '{$message}');");
+        return sse()->executeScript("showToast('{$type}', '{$message}');");
     }
 }

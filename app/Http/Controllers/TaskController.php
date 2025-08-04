@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Traits\DatastarHelpers;
-use Illuminate\Http\Request;
-use Closure;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -31,19 +29,14 @@ class TaskController extends Controller implements HasMiddleware
 
     public function store(): StreamedResponse
     {
-        $signals = $this->readSignals();
-
-        $task_data = $this->validate(
-            $signals,
-            $this->rules()
-        );
+        $task_data = sse()->validate($this->rules());
 
         $task = auth()->user()->tasks()->create($task_data);
 
         if (auth()->user()->tasks()->count() === 1) {
-            $this->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
+            sse()->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks])->fragment('task-list'));
         } else {
-            $this->patchElements(
+            sse()->patchElements(
                 view('components.tasks.item', compact('task')),
                 [
                     'selector' => '#task-list',
@@ -52,13 +45,14 @@ class TaskController extends Controller implements HasMiddleware
             );
         }
 
-        return $this->patchSignals([
+        $this->toastify(
+            'success',
+            __('Task created successfully!')
+        );
+
+        return sse()->patchSignals([
             'title' => '',
         ])
-            ->toastify(
-                'success',
-                __('Task created successfully!')
-            )
             ->getEventStream();
     }
 
@@ -68,10 +62,10 @@ class TaskController extends Controller implements HasMiddleware
 
         $task->delete();
 
-        $this->removeElements("#task-{$id}");
+        sse()->removeElements("#task-{$id}");
 
         if (auth()->user()->tasks()->count() === 0) {
-            $this->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
+            sse()->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
         }
 
         return $this->toastify(
@@ -87,17 +81,18 @@ class TaskController extends Controller implements HasMiddleware
             'is_completed' => !$task->is_completed,
         ]);
 
-        return $this->patchElements(view('components.tasks.item', compact('task'))->fragment('task-description'))
-            ->toastify(
-                'success',
-                $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
-            )
+        $this->toastify(
+            'success',
+            $task->is_completed ? __('Congratulations on completing the task!') : __('Task updated successfully!')
+        );
+
+        return sse()->patchElements(view('components.tasks.item', compact('task'))->fragment('task-description'))
             ->getEventStream();
     }
 
     public function getForm(Task $task): StreamedResponse
     {
-        return $this->patchSignals([
+        return sse()->patchSignals([
             "title_{$task->id}" => $task->title,
             "due_date_{$task->id}" => $task->due_date->format('Y-m-d'),
             'errors' => [
@@ -111,16 +106,13 @@ class TaskController extends Controller implements HasMiddleware
 
     public function getItem(Task $task): StreamedResponse
     {
-        return $this->patchElements(view('components.tasks.item', compact('task')))
+        return sse()->patchElements(view('components.tasks.item', compact('task')))
             ->getEventStream();
     }
 
     public function update(Task $task): StreamedResponse
     {
-        $signals = $this->readSignals();
-
-        $taskData = $this->validate(
-            $signals,
+        $taskData = sse()->validate(
             $this->setRulesKey($task->id),
         );
 
@@ -129,11 +121,12 @@ class TaskController extends Controller implements HasMiddleware
             'due_date' => $taskData["due_date_{$task->id}"],
         ]);
 
-        return $this->patchElements(view('components.tasks.item', compact('task')))
-            ->toastify(
-                'success',
-                __('Task updated successfully!')
-            )
+        $this->toastify(
+            'success',
+            __('Task updated successfully!')
+        );
+
+        return sse()->patchElements(view('components.tasks.item', compact('task')))
             ->getEventStream();
     }
 }
