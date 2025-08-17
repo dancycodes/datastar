@@ -16,7 +16,6 @@
 ?>
 
 <x-layouts.app>
-    <a href="{{route('tasks.dump')}}" class="btn-danger">dump and dd example</a>
     <div class="w-full max-w-lg mx-auto space-y-4">
         <div class="w-full text-right">
             <button

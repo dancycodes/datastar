@@ -96,14 +96,6 @@ class TaskController extends Controller implements HasMiddleware
             ->getEventStream();
     }
 
-
-    public function dump(): StreamedResponse
-    {
-        dump('Here is a dump');
-        dump('Another dump and below a dd');
-        dd("Hello DD");
-    }
-
     public function getForm(Task $task): StreamedResponse
     {
         return sse()->patchSignals([
