@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06cfbb887e98330774c143982266b816",
+    "content-hash": "80ba2ce3f3e61733704d053e0feabed1",
     "packages": [
         {
             "name": "brick/math",
@@ -3151,16 +3151,16 @@
         },
         {
             "name": "putyourlightson/laravel-datastar",
-            "version": "1.0.0-RC.4",
+            "version": "1.0.0-RC.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/putyourlightson/laravel-datastar.git",
-                "reference": "7af5db68a5c09d0638bd07b2330cffe223baf4c8"
+                "reference": "98006879982c401c6af0ff0411d4e9c409b1dca3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/7af5db68a5c09d0638bd07b2330cffe223baf4c8",
-                "reference": "7af5db68a5c09d0638bd07b2330cffe223baf4c8",
+                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/98006879982c401c6af0ff0411d4e9c409b1dca3",
+                "reference": "98006879982c401c6af0ff0411d4e9c409b1dca3",
                 "shasum": ""
             },
             "require": {
@@ -3205,7 +3205,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-12T17:33:03+00:00"
+            "time": "2025-08-17T17:09:37+00:00"
         },
         {
             "name": "ralouphie/getallheaders",

@@ -13,7 +13,7 @@
         "laravel/folio": "^1.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "putyourlightson/laravel-datastar": "^1.0.0-RC.4"
+        "putyourlightson/laravel-datastar": "^1.0.0-RC.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
