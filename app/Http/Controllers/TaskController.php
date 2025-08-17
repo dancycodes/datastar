@@ -29,6 +29,7 @@ class TaskController extends Controller implements HasMiddleware
 
     public function store(): StreamedResponse
     {
+
         $task_data = sse()->validate($this->rules());
 
         $task = auth()->user()->tasks()->create($task_data);
@@ -45,15 +46,18 @@ class TaskController extends Controller implements HasMiddleware
             );
         }
 
-        $this->toastify(
-            'success',
-            __('Task created successfully!')
-        );
+        // $this->toastify(
+        //     'success',
+        //     __('Task created successfully!')
+        // );
 
         return sse()->patchSignals([
             'title' => '',
         ])
-            ->getEventStream();
+            ->getEventStream(function () {
+                sse()
+                    ->throwException(new \Exception('Task not found'));
+            });
     }
 
     public function destroy(Task $task): StreamedResponse

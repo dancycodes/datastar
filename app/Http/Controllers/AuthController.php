@@ -157,7 +157,7 @@ class AuthController extends Controller
     {
         $signals = sse()->readSignals();
 
-        $validated = sse()->validate($signals, [
+        $validated = sse()->validate( [
             'email' => 'required|email|max:100',
             'password' => 'required|string|min:8|confirmed',
             'otp' => 'required',
@@ -217,7 +217,7 @@ class AuthController extends Controller
     {
         $signals = sse()->readSignals();
 
-        $validated = sse()->validate($signals, [
+        $validated = sse()->validate([
             'otp' => 'required|string|size:6',
         ]);
 

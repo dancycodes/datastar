@@ -13,7 +13,7 @@
         "laravel/folio": "^1.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "putyourlightson/laravel-datastar": "dev-actions"
+        "putyourlightson/laravel-datastar": "1.0.0-RC.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -75,6 +75,6 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "RC",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
