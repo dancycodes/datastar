@@ -29,8 +29,6 @@ class TaskController extends Controller implements HasMiddleware
 
     public function store(): StreamedResponse
     {
-        dump('hello');
-        dd('here');
 
         $task_data = sse()->validate($this->rules());
 
