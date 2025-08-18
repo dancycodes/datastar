@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "80ba2ce3f3e61733704d053e0feabed1",
+    "content-hash": "62e604c85556db9d9e42552b88a52524",
     "packages": [
         {
             "name": "brick/math",
@@ -3151,16 +3151,16 @@
         },
         {
             "name": "putyourlightson/laravel-datastar",
-            "version": "1.0.0-RC.5",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/putyourlightson/laravel-datastar.git",
-                "reference": "98006879982c401c6af0ff0411d4e9c409b1dca3"
+                "reference": "66db91f65d10776b4937821e925a6576204c5d3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/98006879982c401c6af0ff0411d4e9c409b1dca3",
-                "reference": "98006879982c401c6af0ff0411d4e9c409b1dca3",
+                "url": "https://api.github.com/repos/putyourlightson/laravel-datastar/zipball/66db91f65d10776b4937821e925a6576204c5d3e",
+                "reference": "66db91f65d10776b4937821e925a6576204c5d3e",
                 "shasum": ""
             },
             "require": {
@@ -3173,6 +3173,7 @@
                 "craftcms/phpstan": "dev-main",
                 "pestphp/pest": "^3.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3205,7 +3206,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-08-17T17:09:37+00:00"
+            "time": "2025-08-18T08:02:00+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -8510,7 +8511,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "putyourlightson/laravel-datastar": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
