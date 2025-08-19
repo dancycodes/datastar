@@ -46,18 +46,14 @@ class TaskController extends Controller implements HasMiddleware
             );
         }
 
-        // $this->toastify(
-        //     'success',
-        //     __('Task created successfully!')
-        // );
+        $this->toastify(
+            'success',
+            __('Task created successfully!')
+        );
 
         return sse()->patchSignals([
             'title' => '',
-        ])
-            ->getEventStream(function () {
-                sse()
-                    ->throwException(new \Exception('Task not found'));
-            });
+        ])->getEventStream();
     }
 
     public function destroy(Task $task): StreamedResponse
