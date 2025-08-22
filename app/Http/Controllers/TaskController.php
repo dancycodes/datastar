@@ -7,6 +7,7 @@ use App\Traits\DatastarHelpers;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Http\Request;
 
 class TaskController extends Controller implements HasMiddleware
 {
@@ -46,6 +47,11 @@ class TaskController extends Controller implements HasMiddleware
             );
         }
 
+        sse()->patchElements(
+            view('components.analytics'), 
+            ['selector' => '#analytics-section']
+        );
+
         $this->toastify(
             'success',
             __('Task created successfully!')
@@ -68,6 +74,11 @@ class TaskController extends Controller implements HasMiddleware
             sse()->patchElements(view('pages.todos', ['tasks' => auth()->user()->tasks()->latest()->get()])->fragment('task-list'));
         }
 
+        sse()->patchElements(
+            view('components.analytics'), 
+            ['selector' => '#analytics-section']
+        );
+
         return $this->toastify(
             'success',
             __('Task deleted successfully!')
@@ -80,6 +91,11 @@ class TaskController extends Controller implements HasMiddleware
         $task->update([
             'is_completed' => !$task->is_completed,
         ]);
+
+        sse()->patchElements(
+            view('components.analytics'), 
+            ['selector' => '#analytics-section']
+        );
 
         $this->toastify(
             'success',
@@ -128,5 +144,19 @@ class TaskController extends Controller implements HasMiddleware
 
         return sse()->patchElements(view('components.tasks.item', compact('task')))
             ->getEventStream();
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('search');
+
+        $tasks = Task::searchColumn('title', $query)
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return sse()->patchElements(
+            view('pages.todos', compact(['tasks', 'query']))->fragment('task-list')
+        )->getEventStream();
     }
 }

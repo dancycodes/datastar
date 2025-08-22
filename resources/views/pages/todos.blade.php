@@ -65,22 +65,61 @@
                 </button>
             </x-ui.card>
 
+            {{-- Analytics functionality --}}
+            <x-ui.card>
+                <x-analytics />
+            </x-ui.card>
+
+            {{-- Search functionality --}}
+            <div class="relative w-3/4 mt-2">
+                <svg class="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" 
+                    aria-hidden="true" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-width="2" 
+                        d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                </svg>
+
+                <input 
+                    type="text" 
+                    placeholder="Search tasks..." 
+                    class="text-sm w-full outline-none focus:border-2 focus:border-blue-500 p-1.5 pl-8 border rounded"
+                    data-bind-search 
+                    data-on-input__debounce.300ms="{{ datastar()->action(['TaskController', 'search']) }}"
+                />
+            </div>
+
             @fragment('task-list')
                 <x-ui.card id="task-list">
                         @forelse ($tasks as $task)
                             <x-tasks.item :task="$task" />
                         @empty
-                            <div class="text-center space-y-3">
-                                <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                                    </svg>
+                            @if (!empty($query))
+                                <div class="text-center space-y-3">
+                                    <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-center font-semibold text-gray-600">{{ __('No Tasks Found') }}</p>
+                                        <p class="text-center text-sm text-gray-500 mt-1">{{ __('Try adjusting your search or filter to find what you\'re looking for.') }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-center font-semibold text-gray-600">{{ __('No Tasks Added Yet') }}</p>
-                                    <p class="text-center text-sm text-gray-500 mt-1">{{ __('Create your first task above to get started!') }}</p>
+                                @else
+                                <div class="text-center space-y-3">
+                                    <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-center font-semibold text-gray-600">{{ __('No Tasks Added Yet') }}</p>
+                                        <p class="text-center text-sm text-gray-500 mt-1">{{ __('Create your first task above to get started!') }}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         @endforelse
                 </x-ui.card>
             @endfragment
