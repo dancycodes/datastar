@@ -1,0 +1,25 @@
+{
+    "name": "activity/todolog",
+    "description": "historiques des activités dans le todoapp",
+    "type": "package",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Activity\\Todolog\\": "src/"
+        }
+    },
+    "extra":{
+        "laravel":{
+            "providers":[
+                "Activity\\Todolog\\TodologServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "wilfried"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
