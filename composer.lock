@@ -4,8 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "80ba2ce3f3e61733704d053e0feabed1",
+    "content-hash": "c30ac4cefd55c56b4c90e40651567010",
     "packages": [
+        {
+            "name": "activity/todolog",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Kamdemloic/todolog.git",
+                "reference": "60077328b17f3602ff43c8d8ea5a9c37d790ed77"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Kamdemloic/todolog/zipball/60077328b17f3602ff43c8d8ea5a9c37d790ed77",
+                "reference": "60077328b17f3602ff43c8d8ea5a9c37d790ed77",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Activity\\Todolog\\TodologServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Activity\\Todolog\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "wilfried"
+                }
+            ],
+            "description": "historiques des activités dans le todoapp",
+            "support": {
+                "issues": "https://github.com/Kamdemloic/todolog/issues",
+                "source": "https://github.com/Kamdemloic/todolog/tree/main"
+            },
+            "time": "2025-08-22T22:25:32+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.13.1",
@@ -8510,7 +8554,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "activity/todolog": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
